@@ -1,0 +1,66 @@
+{% from "admin/_layout.html" import sidebar, status_badge %}
+{% extends "base.html" %}
+{% block title %}Dashboard — Ecomm Guru Admin{% endblock %}
+{% block body %}
+<div class="flex min-h-screen">
+  {{ sidebar('dashboard', user) }}
+  <main class="flex-1 p-8">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <p class="text-gray-500">Manage AI-generated blogs for ecomm-guru.com</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="text-sm text-gray-500">Total Blogs</div>
+        <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.total }}</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="text-sm text-gray-500">In Review</div>
+        <div class="text-3xl font-bold text-yellow-600 mt-1">{{ stats.review }}</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="text-sm text-gray-500">Published</div>
+        <div class="text-3xl font-bold text-green-600 mt-1">{{ stats.published }}</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="text-sm text-gray-500">AI Jobs Running</div>
+        <div class="text-3xl font-bold text-orange-500 mt-1">{{ stats.ai_jobs }}</div>
+      </div>
+    </div>
+
+    <div class="flex gap-4 mb-8">
+      <a href="/admin/ai" class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg font-medium transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Generate New Blog with AI
+      </a>
+      <a href="/admin/blogs" class="inline-flex items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-lg font-medium transition">
+        View All Blogs
+      </a>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="font-semibold text-gray-900">Recent Blogs</h2>
+      </div>
+      {% if recent %}
+      <div class="divide-y divide-gray-100">
+        {% for blog in recent %}
+        <a href="/admin/blogs/{{ blog.id }}" class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition">
+          <div>
+            <div class="font-medium text-gray-900">{{ blog.title }}</div>
+            <div class="text-sm text-gray-500">{{ blog.word_count }} words · {{ blog.category }}</div>
+          </div>
+          {{ status_badge(blog.status) }}
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="px-6 py-12 text-center text-gray-500">
+        <p>No blogs yet. <a href="/admin/ai" class="text-orange-500 hover:underline">Generate your first blog with AI</a></p>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+{% endblock %}

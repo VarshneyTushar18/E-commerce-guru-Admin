@@ -1,0 +1,68 @@
+{% from "admin/_layout.html" import sidebar %}
+{% extends "base.html" %}
+{% block title %}Settings — Ecomm Guru Admin{% endblock %}
+{% block body %}
+<div class="flex min-h-screen">
+  {{ sidebar('settings', user) }}
+  <main class="flex-1 p-8">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+      <p class="text-gray-500">Configure integrations and API keys</p>
+    </div>
+
+    <div class="max-w-2xl space-y-6">
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="font-semibold text-gray-900 mb-4">OpenAI (AI Blog Generation)</h2>
+        {% if openai_configured %}
+        <div class="flex items-center gap-2 text-green-600">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <span class="text-sm font-medium">API key configured</span>
+        </div>
+        {% else %}
+        <div class="flex items-center gap-2 text-red-600 mb-3">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+          <span class="text-sm font-medium">Not configured</span>
+        </div>
+        <p class="text-sm text-gray-600">Add <code class="bg-gray-100 px-1 rounded">OPENAI_API_KEY</code> to your <code class="bg-gray-100 px-1 rounded">.env</code> file.</p>
+        {% endif %}
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="font-semibold text-gray-900 mb-4">WordPress (ecomm-guru.com)</h2>
+        {% if wp_configured and wp_status.ok %}
+        <div class="flex items-center gap-2 text-green-600 mb-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <span class="text-sm font-medium">Connected as {{ wp_status.user }}</span>
+        </div>
+        {% elif wp_configured %}
+        <div class="flex items-center gap-2 text-red-600 mb-2">
+          <span class="text-sm font-medium">Connection failed: {{ wp_status.error }}</span>
+        </div>
+        {% else %}
+        <div class="flex items-center gap-2 text-yellow-600 mb-2">
+          <span class="text-sm font-medium">Not configured</span>
+        </div>
+        {% endif %}
+        <div class="text-sm text-gray-600 space-y-2 mt-3">
+          <p>To publish blogs to <a href="https://www.ecomm-guru.com" target="_blank" class="text-orange-500 hover:underline">ecomm-guru.com</a>, add these to your <code class="bg-gray-100 px-1 rounded">.env</code>:</p>
+          <pre class="bg-gray-50 p-3 rounded-lg text-xs overflow-x-auto">WP_SITE_URL=https://www.ecomm-guru.com
+WP_USERNAME=your-wp-username
+WP_APP_PASSWORD=your-application-password</pre>
+          <p class="text-xs text-gray-500">Create an Application Password in WordPress: Users → Profile → Application Passwords</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="font-semibold text-gray-900 mb-4">How the AI Agent Works</h2>
+        <ol class="text-sm text-gray-600 space-y-2 list-decimal list-inside">
+          <li><strong>Research</strong> — Analyzes topic, keywords, and Indian ecommerce context</li>
+          <li><strong>Outline</strong> — Creates 8-12 section structure with FAQ</li>
+          <li><strong>Write</strong> — Generates 2500+ word HTML article with Indian examples</li>
+          <li><strong>SEO</strong> — Optimizes meta title, description, keywords, and slug</li>
+          <li><strong>Review</strong> — You review in admin, then publish to WordPress</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

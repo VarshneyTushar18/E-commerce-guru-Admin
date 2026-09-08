@@ -1,0 +1,68 @@
+{% from "admin/_layout.html" import sidebar, status_badge %}
+{% extends "base.html" %}
+{% block title %}Edit — {{ blog.title }}{% endblock %}
+{% block body %}
+<div class="flex min-h-screen">
+  {{ sidebar('blogs', user) }}
+  <main class="flex-1 p-8">
+    <a href="/admin/blogs/{{ blog.id }}" class="text-sm text-gray-500 hover:text-gray-700 mb-2 inline-block">← Back to preview</a>
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Edit Blog</h1>
+
+    {% if request.query_params.get('error') %}
+    <div class="mb-6 bg-red-50 text-red-700 px-4 py-3 rounded-lg">{{ request.query_params.get('error') }}</div>
+    {% endif %}
+
+    <form method="post" action="/admin/blogs/{{ blog.id }}/edit" class="space-y-6 max-w-4xl">
+      <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <input name="title" required value="{{ blog.title }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <input name="category" value="{{ blog.category }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Excerpt</label>
+          <textarea name="excerpt" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">{{ blog.excerpt }}</textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Content (HTML)</label>
+          <textarea name="content" required rows="18" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-orange-500 outline-none">{{ blog.content }}</textarea>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h2 class="font-semibold text-gray-900">SEO</h2>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
+          <input name="meta_title" value="{{ blog.meta_title }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+          <textarea name="meta_description" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-orange-500">{{ blog.meta_description }}</textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Keywords</label>
+          <input name="keywords" value="{{ blog.keywords }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <input name="tags" value="{{ blog.tags }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3 items-center">
+        <button type="submit" class="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg font-medium">Save locally</button>
+        <button type="submit" name="push_to_wordpress" value="1" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg font-medium" onclick="return confirm('Save and push changes to ecomm-guru.com?')">
+          Save &amp; Update on Website
+        </button>
+        <a href="/admin/blogs/{{ blog.id }}" class="text-sm text-gray-500 hover:text-gray-800 px-3">Cancel</a>
+        {% if blog.wp_post_id %}
+        <span class="text-xs text-gray-400">WP #{{ blog.wp_post_id }}</span>
+        {% endif %}
+      </div>
+    </form>
+  </main>
+</div>
+{% endblock %}

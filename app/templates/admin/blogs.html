@@ -1,0 +1,70 @@
+{% from "admin/_layout.html" import sidebar, status_badge %}
+{% extends "base.html" %}
+{% block title %}Blogs — Ecomm Guru Admin{% endblock %}
+{% block body %}
+<div class="flex min-h-screen">
+  {{ sidebar('blogs', user) }}
+  <main class="flex-1 p-8">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">All Blogs</h1>
+        <p class="text-gray-500">{{ blogs|length }} articles</p>
+      </div>
+      <div class="flex gap-2">
+        <form method="post" action="/admin/blogs/sync">
+          <button type="submit" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-lg font-medium transition">
+            Sync from Website
+          </button>
+        </form>
+        <a href="/admin/ai" class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg font-medium transition">+ New with AI</a>
+      </div>
+    </div>
+
+    {% if synced %}
+    <div class="mb-6 bg-green-50 text-green-700 px-4 py-3 rounded-lg">
+      Synced from WordPress — {{ sync_created or 0 }} new, {{ sync_updated or 0 }} updated.
+    </div>
+    {% endif %}
+    {% if sync_error %}
+    <div class="mb-6 bg-red-50 text-red-700 px-4 py-3 rounded-lg">Sync failed: {{ sync_error }}</div>
+    {% endif %}
+
+    <div class="flex gap-2 mb-6">
+      <a href="/admin/blogs" class="px-3 py-1.5 rounded-lg text-sm {% if not status_filter %}bg-orange-100 text-orange-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">All</a>
+      <a href="/admin/blogs?status=review" class="px-3 py-1.5 rounded-lg text-sm {% if status_filter == 'review' %}bg-orange-100 text-orange-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Review</a>
+      <a href="/admin/blogs?status=published" class="px-3 py-1.5 rounded-lg text-sm {% if status_filter == 'published' %}bg-orange-100 text-orange-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Published</a>
+      <a href="/admin/blogs?status=draft" class="px-3 py-1.5 rounded-lg text-sm {% if status_filter == 'draft' %}bg-orange-100 text-orange-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">Draft</a>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Title</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Category</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Words</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for blog in blogs %}
+          <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='/admin/blogs/{{ blog.id }}'">
+            <td class="px-6 py-4">
+              <div class="font-medium text-gray-900">{{ blog.title[:80] }}{% if blog.title|length > 80 %}...{% endif %}</div>
+              {% if blog.wp_post_id %}<div class="text-xs text-gray-400 mt-0.5">WP #{{ blog.wp_post_id }}</div>{% endif %}
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ blog.category }}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ blog.word_count }}</td>
+            <td class="px-6 py-4">{{ status_badge(blog.status) }}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ blog.created_at.strftime('%d %b %Y') }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">No blogs found. <a href="/admin/ai" class="text-orange-500">Generate one with AI</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+{% endblock %}
